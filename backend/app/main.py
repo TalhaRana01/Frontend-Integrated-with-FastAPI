@@ -3,6 +3,9 @@ from contextlib import asynccontextmanager
 from app.database.config import create_tables, SessionDep
 from app.products.services import create_product, get_all_products
 from app.products.models import ProductCreate, ProductOut
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 @asynccontextmanager
 async def lifespan(app:FastAPI):
@@ -11,6 +14,13 @@ async def lifespan(app:FastAPI):
   
   
 app = FastAPI(lifespan=lifespan)
+
+app.add_middleware(
+  CORSMiddleware,
+  allow_origins =["http://localhost:5173"],
+  allow_credentials = True,
+  allow_methods = ["*"]
+)
 
 @app.post("/products", response_model=ProductOut)
 def product_create(session:SessionDep, new_product: ProductCreate):
